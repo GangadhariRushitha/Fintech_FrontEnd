@@ -1,48 +1,38 @@
-// import { useState } from "react";
-// import api from "../Api/axiosClient";
+import React, { useEffect, useState } from "react";
+import api from "../Api/axiosClient";
 
-// export default function Ledger() {
-//   const [accountId, setAccountId] = useState("");
-//   const [entries, setEntries] = useState([]);
+export default function Ledger() {
+  const [entries, setEntries] = useState([]);
 
-//   const loadLedger = async () => {
-//     if (!accountId) return;
-//     try {
-//       const res = await api.get(`/ledger/account/${accountId}`);
-//       setEntries(res.data);
-//     } catch (err) {
-//       console.error(err);
-//       alert("Failed to load ledger. Make sure account exists.");
-//     }
-//   };
+  useEffect(() => {
+    async function load() {
+      try {
+        const r = await api.get('/api/ledger');
+        setEntries(r.data || []);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    load();
+  }, []);
 
-//   return (
-//     <div className="min-h-screen flex justify-center bg-gray-100 p-4">
-//       <div className="bg-white p-6 rounded shadow w-full max-w-md">
-//         <h2 className="text-xl font-bold mb-4 text-center">Ledger</h2>
-//         <input
-//           type="number"
-//           placeholder="Account ID"
-//           className="w-full mb-3 p-2 border rounded"
-//           value={accountId}
-//           onChange={e => setAccountId(e.target.value)}
-//         />
-//         <button
-//           className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-//           onClick={loadLedger}
-//         >
-//           Load Ledger
-//         </button>
-
-//         <ul className="mt-4 divide-y">
-//           {entries.map(e => (
-//             <li key={e.ledgerId} className="py-2 flex justify-between">
-//               <span>{e.entryType} → {e.amount}</span>
-//               <span>{new Date(e.entryTimestamp).toLocaleString()}</span>
-//             </li>
-//           ))}
-//         </ul>
-//       </div>
-//     </div>
-//   );
-// }
+  return (
+    <div className="container mx-auto p-6">
+      <div className="bg-white p-6 rounded shadow">
+        <h3 className="text-lg font-semibold mb-4">Ledger</h3>
+        <div className="space-y-3 text-sm">
+          {entries.length === 0 && <div className="text-gray-400">No ledger entries</div>}
+          {entries.map(e => (
+            <div key={e.id} className="flex justify-between border p-3 rounded">
+              <div>
+                <div className="font-medium">{e.entryType} ${Number(e.amount).toFixed(2)}</div>
+                <div className="text-gray-500 text-xs">Tx: {e.transactionId}</div>
+              </div>
+              <div className="text-gray-500 text-xs">{new Date(e.entryTimestamp).toLocaleString()}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

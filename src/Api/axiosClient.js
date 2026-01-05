@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8076",
+  baseURL: "http://localhost:9099",
   headers: {
     "Content-Type": "application/json"
   }
@@ -14,3 +14,10 @@ api.interceptors.request.use((config) => {
 });
 
 export default api;
+
+
+// {
+//   "accountId": 1,
+//   "symbol": "AAPL",
+//   "quantity": 1
+// }
